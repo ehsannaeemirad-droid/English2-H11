@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#58cc02">
+<title>English 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <span class="brand">English 2</span>
+  <span class="stat gold" id="hXp">⭐ 0</span>
+  <span class="stat red" id="hHeart">❤️ 5</span>
+  <span class="stat" id="hStreak">🔥 0</span>
+  <span class="spacer"></span>
+  <button class="iconbtn" id="btnTheme">🌙</button>
+</header>
+
+<div class="topbar" id="topbar" style="display:none">
+  <button class="close" id="tbClose">✕</button>
+  <div class="bar"><i id="tbBar" style="width:0%"></i></div>
+  <span class="hearts" id="tbHearts">❤️ 5</span>
+</div>
+
+<main id="app"></main>
+
+<nav class="bottom">
+  <button data-nav="map" class="on"><span class="e">🗺️</span>درس‌ها</button>
+  <button data-nav="cards"><span class="e">🃏</span>کارت‌ها</button>
+  <button data-nav="review"><span class="e">🔁</span>مرور</button>
+  <button data-nav="stats"><span class="e">📊</span>پیشرفت</button>
+</nav>
+
+<div id="overlay"><div id="sheet"><div class="grab" id="sheetClose"></div><div id="sheetBody"></div></div></div>
+
+<div id="fbSheet">
+  <div class="panel">
+    <p class="msg" id="fbMsg"></p>
+    <p class="ex" id="fbEx"></p>
+    <button class="btn" id="fbBtn">ادامه</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="content/glossary.js"></script>
+<script src="content/audio.js"></script>
+<script src="content/lesson1.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
