@@ -85,8 +85,14 @@ function playCorrect(){ tone(660, 0.12, "sine", 0.14); setTimeout(()=>tone(880, 
 function playWrong(){ tone(220, 0.22, "sine", 0.13); setTimeout(()=>tone(165, 0.28, "sine", 0.13), 90); }
 
 /* ============ AUDIO SPEAKING ============ */
+function audioPath(id){
+  if(!id) return null;
+  if(AUDIO_MAP[id]) return AUDIO_MAP[id];
+  if(S.audioBase) return String(S.audioBase).replace(/\/+$/,"") + "/" + id + ".mp3";
+  return null;
+}
 function speakId(id, fallbackText){
-  const path = id && AUDIO_MAP[id];
+  const path = audioPath(id);
   if(path){
     const a = new Audio(path);
     a.play().catch(()=> tts(fallbackText));
@@ -185,16 +191,17 @@ document.addEventListener("dblclick", e=>{
 /* ============ FEEDBACK SHEET ============ */
 let fbResolve = null;
 function feedback(ok, ex, continueLabel, onContinue){
-  playCorrect(); if(!ok) playWrong();
+  if(ok) playCorrect(); else playWrong();
   if(!ok) loseHeart();
   $fbSheet.classList.remove("ok","no");
   $fbSheet.classList.add("show", ok ? "ok" : "no");
   $fbMsg.textContent = ok ? "✅ درست!" : "❌ نادرست";
   $fbEx.textContent = ex || "";
   $fbBtn.textContent = continueLabel || "ادامه";
+  const token = renderToken;
   fbResolve = ()=>{
     $fbSheet.classList.remove("show");
-    setTimeout(()=>{ if(onContinue) onContinue(); fbResolve = null; }, 200);
+    setTimeout(()=>{ if(onContinue && token === renderToken) onContinue(); fbResolve = null; }, 200);
   };
 }
 $fbBtn.onclick = ()=>{ if(fbResolve) fbResolve(); };
@@ -203,13 +210,18 @@ $fbBtn.onclick = ()=>{ if(fbResolve) fbResolve(); };
 function showTopBar(show){ $topbar.style.display = show ? "flex" : "none"; }
 function setTopProgress(pct){ $tbBar.style.width = Math.round(pct*100) + "%"; }
 document.getElementById("tbClose").onclick = ()=>{
+  if($fbSheet.classList.contains("show")){ $fbSheet.classList.remove("show"); fbResolve = null; }
   if(!state.section) return go("map");
   go("section",{sectionId:state.section.id});
 };
 
 /* ============ NAV / ROUTER ============ */
 const state = { lesson:null, section:null, stepIdx:0, steps:[] };
+let stepCleanup = null;
+let renderToken = 0;
 function go(view, params){
+  renderToken++;
+  if(stepCleanup){ try{ stepCleanup(); }catch(e){} stepCleanup = null; }
   window.scrollTo({top:0, behavior:"instant"});
   showTopBar(view === "step");
   if(view==="map") renderMap();
@@ -249,9 +261,11 @@ function renderMap(){
         </div></div>`;
     if(i < lesson.sections.length-1) html += `<div class="connector ${done?'done':''}"></div>`;
   });
-  html += `</div>
-    <div class="node locked" style="margin-top:18px"><div class="ic">✈️</div>
-      <div class="tt"><b>درس ۲ — سفر به دور دنیا</b><small>به‌زودی</small></div></div>`;
+  html += `</div>`;
+  if(LESSONS[1]){
+    html += `<div class="node locked" style="margin-top:18px"><div class="ic">${esc(LESSONS[1].icon||"📘")}</div>
+      <div class="tt"><b>درس ۲ — ${esc(LESSONS[1].title)}</b><small>به‌زودی</small></div></div>`;
+  }
   $app.innerHTML = html;
   $app.querySelectorAll(".node[data-sec]").forEach(n=>{
     if(n.classList.contains("locked")) return;
@@ -928,6 +942,7 @@ function rListenMcq(st, el){
     playing = true; playBtn.disabled = true; playBtn.textContent = "🔊 در حال پخش...";
     let k = 0;
     (function next(){
+      if(!playBtn.isConnected){ playing = false; return; }
       if(k >= st.lines.length){ playing = false; playBtn.disabled = false; playBtn.textContent = "🔊 پخش دوباره"; return; }
       speak(st.lines[k].t); k++;
       setTimeout(next, 2800);
@@ -1093,6 +1108,7 @@ function rSkimScan(st, el){
       if(timeLeft <= 10) tEl.classList.add("warn");
       if(timeLeft <= 0){ clearInterval(timerId); timerId = null; drawScan(); }
     }, 1000);
+    stepCleanup = ()=>{ if(timerId){ clearInterval(timerId); timerId = null; } };
     document.getElementById("done").onclick = ()=>{
       if(timerId){ clearInterval(timerId); timerId = null; }
       drawScan();
@@ -1167,6 +1183,7 @@ function rRoleplay(st, el){
       <div id="rp"></div></div>`;
   const box = document.getElementById("rp");
   function drawLine(k){
+    if(!box.isConnected) return;
     if(k >= st.lines.length){
       feedback(true, `🎉 نقش‌آفرینی کامل شد! امتیاز: ${score}`, "پایان", finishStep);
       return;
@@ -1296,7 +1313,7 @@ function renderStats(){
       <p class="muted">${done} از ${total} بخش (${pct}%)</p></div>
     <div class="card">
       <h3>تنظیمات</h3>
-      <p class="muted">آدرس فایل‌های صوتی (اختیاری):</p>
+      <p class="muted">آدرس فایل‌های صوتی (اختیاری) — نام هر فایل باید <span class="ltr">audioId.mp3</span> باشد:</p>
       <input id="audioBase" placeholder="https://example.com/audio/" value="${esc(S.audioBase||"")}"
         style="width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);
         background:var(--bg2);color:var(--tx);direction:ltr;font-size:14px">
