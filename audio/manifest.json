@@ -1,0 +1,4 @@
+{
+  "_comment": "audioId -> mp3 path. Missing IDs fall back to browser TTS (Step 11). Files live in audio/ and are cached offline by the service worker.",
+  "_example": { "l1_s2_part1": "audio/l1/l1_s2_part1.mp3" }
+}

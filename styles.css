@@ -1,0 +1,456 @@
+/* ============================================================================
+   English 2 — exercise-book design system (plan Step 9)
+
+   Tokens are checked by contrast.js — every text/background pair >= 4.5:1,
+   control borders >= 3:1. Do not change a token without re-running it.
+   ============================================================================ */
+@font-face{
+  font-family:"Vazirmatn"; font-style:normal; font-weight:400; font-display:swap;
+  src:url("fonts/vazirmatn-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+2000-206F,U+2074,U+20AC,U+2212,U+2215;
+}
+@font-face{
+  font-family:"Vazirmatn"; font-style:normal; font-weight:400; font-display:swap;
+  src:url("fonts/vazirmatn-arabic.woff2") format("woff2");
+  unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF;
+}
+@font-face{
+  font-family:"Vazirmatn"; font-style:normal; font-weight:700; font-display:swap;
+  src:url("fonts/vazirmatn-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+2000-206F,U+2074,U+20AC,U+2212,U+2215;
+}
+@font-face{
+  font-family:"Vazirmatn"; font-style:normal; font-weight:700; font-display:swap;
+  src:url("fonts/vazirmatn-arabic.woff2") format("woff2");
+  unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF;
+}
+@font-face{
+  font-family:"Vazirmatn"; font-style:normal; font-weight:800; font-display:swap;
+  src:url("fonts/vazirmatn-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+2000-206F,U+2074,U+20AC,U+2212,U+2215;
+}
+@font-face{
+  font-family:"Vazirmatn"; font-style:normal; font-weight:800; font-display:swap;
+  src:url("fonts/vazirmatn-arabic.woff2") format("woff2");
+  unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF;
+}
+@font-face{
+  font-family:"Nunito"; font-style:normal; font-weight:700; font-display:swap;
+  src:url("fonts/nunito-700-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+2000-206F,U+2074,U+20AC,U+2212,U+2215;
+}
+
+/* ---- tokens (light) — verified by contrast.js ---- */
+:root{
+  --paper:#F7F9FC;            /* page background            */
+  --card:#FFFFFF;             /* cards                      */
+  --tx:#1F2933;               /* main text   (14.0:1 paper) */
+  --tx2:#4B5B6B;              /* secondary   ( 6.6:1 paper) */
+  --ink:#1D4E89;              /* primary     (white  8.4:1) */
+  --ink-tx:#FFFFFF;           /* text on primary            */
+  --ok:#1B7F4B;               /* correct     (white  5.0:1) */
+  --no:#C62F3A;               /* wrong       (white  5.4:1) */
+  --ok-tint:#E3F4EA; --ok-tx:#14633A;   /* correct text on tint 6.4:1 */
+  --no-tint:#FBE7E9; --no-tx:#A3232D;   /* wrong text on tint    6.3:1 */
+  --hl:#FFD84D; --hl-tx:#1F2933;        /* highlighter (10.7:1)  */
+  --ctl:#7A8CA3;              /* control border (3.3:1)     */
+  --line:#DCE3EC;             /* decorative hairline        */
+  --ring:#1D4E89;             /* focus ring                 */
+  --r-ctl:14px; --r-card:20px;
+  --edge:0 2px 0 var(--ctl);  /* flat 2px lower edge        */
+}
+html[data-theme="dark"]{
+  --paper:#121821; --card:#1B2430;
+  --tx:#EEF2F7;               /* 15.9:1                     */
+  --tx2:#A9B6C6;              /*  7.6:1 on card             */
+  --ink:#7DB1FF; --ink-tx:#0B1220;      /* 8.6:1                  */
+  --ok:#4CBF7A; --ok-tint:#17301F; --ok-tx:#8CE0AE;
+  --no:#E06874; --no-tint:#3A1A1E; --no-tx:#F0A3AB;
+  --hl:#FFD84D; --hl-tx:#121821;        /* 12.9:1                */
+  --ctl:#5F718A;              /* 3.1:1 on card              */
+  --line:#2A3646;
+  --ring:#7DB1FF;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  font-family:"Vazirmatn",Tahoma,system-ui,sans-serif;
+  background:var(--paper); color:var(--tx);
+  font-size:17px; line-height:1.7; font-weight:400;
+  overscroll-behavior-y:none; -webkit-font-smoothing:antialiased;
+}
+/* English text: Nunito, LTR, left-aligned, never justified */
+.ltr,.en{direction:ltr;unicode-bidi:isolate;text-align:left;font-family:"Nunito","Vazirmatn",sans-serif}
+p.ltr,p .ltr{text-align:left}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none;padding:0}
+.fa-num{font-variant-numeric:normal}
+/* Persian digits inside Persian text, Latin digits inside English text (Step 9) */
+.ltr{font-feature-settings:"lnum";}
+body{font-feature-settings:"tnum" 0;}
+
+/* a11y: visible 3px focus ring everywhere (Step 12) */
+:focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+#app{max-width:600px;margin:0 auto;padding:0 16px 120px;min-height:100vh}
+@media(min-width:768px){ #app{max-width:560px} }
+
+/* ============ graph-paper header areas (the only decoration) ============ */
+.grid-paper{
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:22px 22px;
+  background-position:center top;
+}
+.pagehead{border-bottom:2px solid var(--ctl);padding:18px 2px 12px;margin-bottom:10px;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:22px 22px}
+.pagehead h1{margin:0;font-size:24px;font-weight:800;line-height:1.5}
+.pagehead .sub{color:var(--tx2);font-size:14px;font-weight:600;margin:2px 0 0}
+.pagehead .sub.ltr{text-align:left}
+
+h2{font-size:20px;font-weight:800;margin:0 0 8px}
+h3{font-size:17px;font-weight:800;margin:14px 0 8px}
+p{margin:8px 0}
+.muted{color:var(--tx2);font-size:14px;font-weight:600}
+
+/* the one memorable element: a highlighter stroke */
+mark,.hl{background:var(--hl);color:var(--hl-tx);border-radius:4px;padding:0 6px;
+  font-weight:800;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+/* ============ cards & buttons ============ */
+.card{background:var(--card);border:2px solid var(--ctl);border-radius:var(--r-card);
+  padding:18px;margin:12px 0;box-shadow:var(--edge)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;
+  padding:12px 18px;border-radius:var(--r-ctl);font-weight:800;font-size:16px;
+  background:var(--ink);color:var(--ink-tx);box-shadow:var(--edge);
+  transition:transform .06s;letter-spacing:0}
+.btn:active:not(:disabled){transform:translateY(2px)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.sec{background:var(--card);color:var(--ink);box-shadow:var(--edge)}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.no{background:var(--no);color:#fff}
+.btn.sm{min-height:48px;width:auto;display:inline-flex;padding:8px 14px;font-size:14px}
+.btn svg{width:22px;height:22px;flex:0 0 auto}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* inline SVG line icons */
+.ni{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.iconbtn{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  color:var(--tx2);border:2px solid transparent}
+.iconbtn:hover{border-color:var(--ctl)}
+
+/* ============ forms ============ */
+input[type=text],input[type=url],input[type=search]{
+  width:100%;min-height:48px;padding:10px 14px;border-radius:12px;
+  border:2px solid var(--ctl);background:var(--card);color:var(--tx);font-size:16px}
+input.ltr{direction:ltr;text-align:left}
+
+/* ============ segmented mode control (Step 4) ============ */
+.seg{display:flex;border:2px solid var(--ctl);border-radius:var(--r-ctl);overflow:hidden;
+  background:var(--card)}
+.seg button{flex:1;min-height:48px;font-weight:800;font-size:14px;color:var(--tx2);
+  border-inline-start:2px solid var(--ctl)}
+.seg button:first-child{border-inline-start:none}
+.seg button.on{background:var(--ink);color:var(--ink-tx)}
+.seg.sm button{min-height:40px;font-size:13px}
+
+/* ============ daily goal ring ============ */
+.goalring{position:relative;width:84px;height:84px;flex:0 0 auto}
+.goalring svg{width:84px;height:84px;transform:rotate(-90deg)}
+.goalring .track{stroke:var(--ctl);stroke-width:8;fill:none}
+.goalring .fill{stroke:var(--ink);stroke-width:8;fill:none;stroke-linecap:round;
+  transition:stroke-dashoffset .5s}
+.goalring .lbl{position:absolute;inset:0;display:grid;place-items:center;
+  font-weight:800;font-size:20px;color:var(--tx)}
+
+/* ============ stars ============ */
+.stars{color:var(--tx2);font-size:14px;letter-spacing:2px;white-space:nowrap}
+.stars .on{color:var(--hl-tx);background:var(--hl);border-radius:4px;padding:0 2px}
+
+/* ============ lesson screen top bar (Step 9: the ONLY top bar) ============ */
+#ltop{position:sticky;top:0;z-index:50;background:var(--paper);max-width:600px;
+  margin:0 auto;display:flex;align-items:center;gap:14px;padding:12px 16px 6px}
+#ltop .lclose{width:44px;height:44px;border-radius:12px;border:2px solid var(--ctl);
+  display:grid;place-items:center;font-size:18px;font-weight:800;color:var(--tx2);
+  background:var(--card);box-shadow:var(--edge)}
+#ltop .lbar{flex:1;height:14px;border-radius:99px;background:var(--card);
+  border:2px solid var(--ctl);overflow:hidden}
+#ltop .lbar i{display:block;height:100%;width:0;background:var(--ink);
+  border-radius:99px;transition:width .3s}
+@media(min-width:768px){ #ltop{max-width:560px} }
+
+/* ============ options ============ */
+.q{font-size:20px;font-weight:700;margin:6px 0 4px;line-height:1.5}
+.q-fa{font-size:17px;font-weight:700;color:var(--tx2);margin:2px 0 10px}
+.instr{font-size:17px;font-weight:700;margin:10px 0 6px}
+.opts{display:flex;flex-direction:column;gap:12px;margin:12px 0}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;
+  text-align:start;background:var(--card);border:2px solid var(--ctl);
+  border-radius:var(--r-ctl);padding:10px 14px;font-size:16px;font-weight:700;
+  box-shadow:var(--edge);transition:transform .06s}
+.opt:active:not(.dis){transform:translateY(2px)}
+.opt .key{width:32px;height:32px;border-radius:9px;border:2px solid var(--ctl);
+  display:grid;place-items:center;font-size:14px;font-weight:800;color:var(--tx2);
+  flex:0 0 auto}
+.opt.sel{border-color:var(--ink);box-shadow:0 2px 0 var(--ink)}
+.opt.ok{border-color:var(--ok);background:var(--ok-tint);color:var(--ok-tx);box-shadow:0 2px 0 var(--ok)}
+.opt.ok .key{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{border-color:var(--no);background:var(--no-tint);color:var(--no-tx);box-shadow:0 2px 0 var(--no)}
+.opt.no .key{background:var(--no);border-color:var(--no);color:#fff}
+.opt.dis{cursor:default;opacity:.75}
+.opt .audiobtn{margin-inline-start:auto;width:44px;height:44px;border-radius:10px;
+  border:2px solid var(--ctl);display:grid;place-items:center;color:var(--ink);flex:0 0 auto}
+.opt .audiobtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.opt .audiobtn.playing{color:var(--ink);border-color:var(--ink)}
+
+/* ============ feedback sheet (Step 3) ============ */
+#fbSheet{position:fixed;inset-inline:0;bottom:0;z-index:120;transform:translateY(110%);
+  transition:transform .25s cubic-bezier(.2,.8,.3,1);pointer-events:none}
+#fbSheet.show{transform:translateY(0);pointer-events:auto}
+#fbSheet .panel{max-width:600px;margin:0 auto;padding:18px 20px calc(18px + env(safe-area-inset-bottom));
+  border-radius:20px 20px 0 0;box-shadow:0 -8px 24px rgba(0,0,0,.14)}
+@media(min-width:768px){ #fbSheet .panel{max-width:560px} }
+#fbSheet.ok .panel{background:var(--ok-tint);color:var(--ok-tx);border-top:3px solid var(--ok)}
+#fbSheet.no .panel{background:var(--no-tint);color:var(--no-tx);border-top:3px solid var(--no)}
+#fbSheet .fbTop{display:flex;align-items:center;gap:12px}
+#fbSheet .fbIcon{width:48px;height:48px;border-radius:50%;flex:0 0 auto;display:grid;
+  place-items:center;font-size:24px;font-weight:800;background:var(--card)}
+#fbSheet.ok .fbIcon{color:var(--ok-tx);border:3px solid var(--ok)}
+#fbSheet.no .fbIcon{color:var(--no-tx);border:3px solid var(--no)}
+#fbSheet .msg{font-size:20px;font-weight:800;margin:0}
+#fbSheet .ex{font-size:16px;font-weight:700;margin:10px 0 0;line-height:1.7}
+#fbSheet .btn{margin-top:14px}
+#fbSheet.ok .btn{background:var(--ok)}
+#fbSheet.no .btn{background:var(--no)}
+#fbSheet .markline{margin:10px 0 0;font-size:16px;font-weight:800}
+#fbSheet .markline .opt-reveal{display:block;direction:ltr;text-align:left;
+  font-family:"Nunito",sans-serif;margin-top:4px}
+
+/* ============ toast ============ */
+#toast{position:fixed;bottom:130px;inset-inline:0;display:flex;flex-direction:column;
+  align-items:center;z-index:200;pointer-events:none;gap:6px;padding:0 16px}
+#toast div{background:var(--tx);color:var(--paper);padding:10px 18px;border-radius:12px;
+  font-weight:700;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+
+/* ============ modal sheet / dialog ============ */
+#overlay{position:fixed;inset:0;background:rgba(10,16,26,.55);z-index:100;display:none;
+  align-items:flex-end;justify-content:center}
+#overlay.show{display:flex}
+#sheet{background:var(--card);width:100%;max-width:600px;border-radius:20px 20px 0 0;
+  padding:16px 20px calc(20px + env(safe-area-inset-bottom));max-height:80vh;overflow:auto}
+#sheet .grab{width:44px;height:5px;border-radius:99px;background:var(--ctl);
+  margin:0 auto 14px;cursor:pointer}
+#dlg{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;
+  background:rgba(10,16,26,.55);padding:24px}
+#dlg.show{display:flex}
+#dlg .panel{background:var(--card);border:2px solid var(--ctl);border-radius:var(--r-card);
+  padding:20px;max-width:420px;width:100%}
+#dlg h3{margin-top:0}
+#dlg .row{margin-top:14px}
+#dlg .row .btn{flex:1}
+
+/* ============ bottom nav (Step 8) ============ */
+nav.bottom{position:fixed;inset-inline:0;bottom:0;z-index:60;background:var(--card);
+  border-top:2px solid var(--ctl);display:flex;max-width:600px;margin:0 auto;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));gap:4px}
+nav.bottom button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  min-height:48px;padding:6px 4px;border-radius:12px;font-size:14px;color:var(--tx2);
+  font-weight:600;border:2px solid transparent}
+nav.bottom button.on{color:var(--ink);background:var(--paper);border-color:var(--ctl)}
+nav.bottom.hidden{display:none}
+@media(min-width:768px){ nav.bottom{max-width:560px} }
+
+/* ============ home: section path (Step 8) ============ */
+.homeblock{margin:14px 0}
+.continue{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;
+  min-height:76px;padding:14px 18px;border-radius:var(--r-card);background:var(--ink);
+  color:var(--ink-tx);box-shadow:var(--edge);text-align:start}
+.continue .c1{font-size:14px;font-weight:600;opacity:.85}
+.continue .c2{font-size:20px;font-weight:800}
+.path{display:flex;flex-direction:column;align-items:center;margin:6px 0 0;position:relative}
+.prow{display:flex;justify-content:center;width:100%;position:relative}
+.prow + .prow{margin-top:20px}
+.pconn{position:absolute;top:-20px;left:50%;width:0;height:20px;z-index:0;
+  border-inline-start:3px dotted var(--ctl)}
+.pconn.done{border-inline-start-color:var(--ink)}
+.pnode{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;
+  padding:0;cursor:pointer;transform:translateX(var(--off,0px))}
+.pnode .pb{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;
+  background:var(--card);border:2px solid var(--ctl);box-shadow:var(--edge);color:var(--tx2)}
+.pnode .pb svg{width:30px;height:30px}
+.pnode.done .pb{background:var(--ink);border-color:var(--ink);color:var(--ink-tx)}
+.pnode.current .pb{border-color:var(--ink);border-width:3px;color:var(--ink)}
+.pnode.available .pb{color:var(--ink)}
+.pnode.locked{cursor:default}
+.pnode.locked .pb{opacity:.6}
+.pnode .pcap{margin-top:6px;font-size:14px;font-weight:700;color:var(--tx2);
+  text-align:center;max-width:130px;line-height:1.4}
+.pnode.current .pcap{color:var(--tx);font-weight:800}
+.pnode .stars{margin-top:2px}
+.pnode .testout{margin-top:4px;font-size:14px;font-weight:800;color:var(--ink);
+  background:var(--card);border:2px solid var(--ctl);border-radius:10px;padding:4px 10px}
+
+/* ============ section screen: step list ============ */
+.node{width:100%;display:flex;align-items:center;gap:14px;background:var(--card);
+  border:2px solid var(--ctl);border-radius:var(--r-ctl);box-shadow:var(--edge);
+  padding:12px 14px;margin:0 auto;text-align:start;min-height:64px}
+.node.current{border-color:var(--ink);border-width:3px}
+.node.locked{opacity:.55}
+.node .ic{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;
+  background:var(--paper);border:2px solid var(--ctl);color:var(--tx2);flex:0 0 auto}
+.node .ic svg{width:24px;height:24px}
+.node.done .ic{background:var(--ink);border-color:var(--ink);color:var(--ink-tx)}
+.node.current .ic{border-color:var(--ink);color:var(--ink)}
+.node .tt{flex:1;min-width:0}
+.node .tt b{display:block;font-size:16px;font-weight:800;line-height:1.5}
+.node .tt small{color:var(--tx2);font-size:14px;font-weight:600}
+.connector{width:3px;height:16px;border-inline-start:3px dotted var(--ctl);margin:0 auto}
+.connector.done{border-inline-start-color:var(--ink)}
+
+/* ============ conversation bubbles ============ */
+.bub{max-width:88%;padding:10px 14px;border-radius:16px;margin:8px 0;font-size:16px;
+  position:relative;font-weight:600;border:2px solid var(--ctl);background:var(--card);
+  box-shadow:var(--edge)}
+.bub .spk{font-size:14px;font-weight:800;color:var(--tx2);display:block;margin-bottom:2px}
+.bub.me{background:var(--paper);margin-inline-start:auto}
+
+/* ============ teach cards (Step 10 template) ============ */
+.teachcard{background:var(--card);border:2px solid var(--ctl);border-radius:var(--r-card);
+  box-shadow:var(--edge);padding:16px;margin:12px 0}
+.teachcard .rule{font-size:16px;font-weight:700;line-height:1.9}
+.teachcard .formula{direction:ltr;text-align:left;font-family:"Nunito",sans-serif;
+  font-size:20px;font-weight:700;background:var(--paper);border:2px dashed var(--ctl);
+  border-radius:12px;padding:10px 14px;margin:10px 0;line-height:1.8}
+.teachcard .contrast{color:var(--tx2);font-size:15px;font-weight:600;margin:8px 0;
+  border-inline-start:4px solid var(--ink);padding-inline-start:10px}
+.teachcard .mistake{display:flex;flex-direction:column;gap:6px;margin:10px 0 0;font-size:15px;font-weight:700}
+.teachcard .mistake .bad{color:var(--no-tx);background:var(--no-tint);border-radius:10px;
+  padding:6px 10px;direction:ltr;text-align:left;font-family:"Nunito",sans-serif}
+.teachcard .mistake .good{color:var(--ok-tx);background:var(--ok-tint);border-radius:10px;
+  padding:6px 10px;direction:ltr;text-align:left;font-family:"Nunito",sans-serif}
+.teachex{background:var(--paper);border-radius:12px;padding:10px 12px;margin:8px 0}
+.teachex .en{font-size:17px;font-weight:600}
+.teachex .fa{font-size:14px;color:var(--tx2);font-weight:600;margin-top:2px}
+
+/* ============ flashcard ============ */
+.fc{height:240px;margin:12px 0}
+.fc .inner{position:relative;width:100%;height:100%}
+.fc .face{position:absolute;inset:0;border-radius:var(--r-card);border:2px solid var(--ctl);
+  background:var(--card);box-shadow:var(--edge);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;padding:18px;text-align:center}
+.fc .en{font-size:30px;font-weight:700;direction:ltr}
+.fc .fa{font-size:22px;font-weight:800}
+.fc .muted{font-size:14px}
+
+/* ============ misc ============ */
+.sent{display:inline;line-height:2.1}
+.w{cursor:pointer;border-radius:6px;padding:1px 3px}
+.w:hover{background:var(--paper)}
+.w.seen{background:var(--hl);color:var(--hl-tx)}
+.w.picked{outline:3px solid var(--ink)}
+.w.tgt{background:var(--hl);color:var(--hl-tx);font-weight:800}
+.w.tgt::after{content:" \2713"}
+.w.missed{outline:3px dashed var(--no)}
+.sentblock{background:var(--card);border:2px solid var(--ctl);border-radius:14px;
+  padding:12px 14px;margin:8px 0}
+.sentblock .fa{color:var(--tx2);font-size:14px;font-weight:600;margin-top:8px;
+  border-top:1px dashed var(--ctl);padding-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;min-height:52px}
+.chip{background:var(--card);border:2px solid var(--ctl);border-radius:12px;
+  box-shadow:var(--edge);padding:8px 14px;font-size:15px;font-weight:700;
+  direction:ltr;min-height:44px}
+.chip.picked{background:var(--ink);color:var(--ink-tx)}
+.chip.used{opacity:.25;pointer-events:none}
+.tile{background:var(--card);border:2px solid var(--ctl);border-radius:12px;
+  box-shadow:var(--edge);padding:8px 14px;font-size:15px;font-weight:700;direction:ltr;min-height:44px}
+.builtline{direction:ltr;min-height:52px;border:2px dashed var(--ctl);border-radius:12px;
+  padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--paper)}
+.gap{display:inline-block;min-width:96px;padding:2px 8px;margin:0 2px;border-radius:8px;
+  border:2px solid var(--ink);background:var(--card);font-weight:800;cursor:pointer;
+  font-family:"Nunito",sans-serif}
+.gap.filled{background:var(--hl);color:var(--hl-tx);border-color:var(--ctl)}
+.gap.ok{background:var(--ok-tint);color:var(--ok-tx);border-color:var(--ok)}
+.gap.no{background:var(--no-tint);color:var(--no-tx);border-color:var(--no)}
+.inlinepara{direction:ltr;text-align:left;font-family:"Nunito",sans-serif;font-size:18px;
+  line-height:2.4;background:var(--card);border:2px solid var(--ctl);border-radius:14px;
+  padding:12px 14px;margin:8px 0}
+.slotpop{display:flex;gap:8px;margin:6px 0;flex-wrap:wrap}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mcol{display:flex;flex-direction:column;gap:9px}
+.mitem{background:var(--card);border:2px solid var(--ctl);border-radius:12px;
+  box-shadow:var(--edge);padding:10px;text-align:center;font-size:14px;font-weight:700;
+  min-height:56px;display:flex;align-items:center;justify-content:center;gap:6px}
+.mitem.sel{border-color:var(--ink);border-width:3px}
+.mitem.ok{border-color:var(--ok);background:var(--ok-tint);color:var(--ok-tx);pointer-events:none}
+.mitem.no{border-color:var(--no);background:var(--no-tint);color:var(--no-tx)}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.bin{border:2px dashed var(--ctl);border-radius:14px;padding:10px;min-height:100px;
+  background:var(--card);text-align:center}
+.bin h4{margin:0 0 8px;font-size:14px;color:var(--tx2);font-weight:800}
+.bin .inner{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.typeline{width:100%;min-height:52px;padding:10px 14px;border-radius:12px;font-size:18px;
+  border:2px solid var(--ctl);background:var(--card);color:var(--tx);direction:ltr;text-align:left;
+  font-family:"Nunito",sans-serif}
+.timer{font-size:32px;font-weight:800;text-align:center;color:var(--ink);margin:6px 0;
+  font-variant-numeric:tabular-nums}
+.timer.warn{color:var(--no-tx)}
+.para{direction:ltr;text-align:left;font-family:"Nunito",sans-serif;font-size:17px;
+  line-height:2;background:var(--card);border:2px solid var(--ctl);border-radius:14px;
+  padding:12px 14px;margin:8px 0}
+.empty{text-align:center;color:var(--tx2);padding:40px 20px;font-weight:700}
+.complete{text-align:center;padding:30px 0 10px}
+.complete .big{font-size:56px;line-height:1}
+.complete h1{font-size:26px;font-weight:800;margin:10px 0 4px}
+.complete .sub{color:var(--tx2);font-size:15px;font-weight:700;margin-bottom:18px}
+.rewards{display:flex;justify-content:center;gap:12px;margin:14px 0 20px}
+.reward{flex:1;max-width:130px;border-radius:14px;padding:10px;font-weight:800;
+  border:2px solid var(--ctl);background:var(--card);box-shadow:var(--edge)}
+.reward .k{display:block;font-size:14px;color:var(--tx2);font-weight:600}
+.reward .v{display:block;font-size:20px;margin-top:2px}
+.resultcard{text-align:center}
+.resultcard .stars{font-size:26px;letter-spacing:6px}
+.quote{margin:12px 0 0;padding:14px 16px;border:2px solid var(--ctl);border-radius:var(--r-ctl);
+  background:var(--card);box-shadow:var(--edge);text-align:center}
+.quote p{margin:0 0 6px;font-size:16px;font-weight:700}
+.quote cite{font-style:normal;font-size:14px;font-weight:600;color:var(--tx2)}
+.toprow{display:flex;align-items:center;gap:10px;margin:14px 0 6px}
+.toprow .back{width:44px;height:44px;border-radius:12px;border:2px solid var(--ctl);
+  display:grid;place-items:center;background:var(--card);font-weight:800;color:var(--tx2);
+  box-shadow:var(--edge)}
+.hintbox{background:var(--card);border:2px solid var(--ctl);border-radius:12px;
+  padding:10px 14px;font-size:15px;font-weight:700;color:var(--tx2);margin:8px 0}
+.hintbox .hlabel{color:var(--ink);font-weight:800}
+.progress-label{font-size:14px;font-weight:700;color:var(--tx2);margin:4px 0}
+.bar{height:12px;border-radius:99px;background:var(--card);border:2px solid var(--ctl);overflow:hidden}
+.bar > i{display:block;height:100%;background:var(--ink);border-radius:99px;transition:width .4s}
+.skillbar{margin:10px 0}
+.skillbar .srow{display:flex;justify-content:space-between;font-size:14px;font-weight:700;
+  color:var(--tx2);margin-bottom:4px}
+.banner{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--ctl);
+  border-radius:14px;box-shadow:var(--edge);padding:12px 14px;margin:10px 0;font-weight:700}
+.banner .btn{margin-inline-start:auto;flex:0 0 auto}
+.pill{display:inline-block;background:var(--hl);color:var(--hl-tx);border-radius:8px;
+  font-size:13px;font-weight:800;padding:1px 8px}
+.badge{display:inline-block;border:2px solid var(--ctl);border-radius:10px;
+  font-size:13px;font-weight:800;padding:2px 10px;color:var(--tx2)}
+.badge.tested{background:var(--ink);border-color:var(--ink);color:var(--ink-tx)}
+.teacher{border:2px dashed var(--no);border-radius:14px;padding:12px;margin:10px 0}
+.teacher h3{color:var(--no-tx);margin-top:0}
+
+/* ============ reduced motion (Step 12) ============ */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important}
+}
+
+/* ============ 200% zoom safety (Step 12) ============ */
+@media (max-width:360px){
+  body{font-size:16px}
+  .opt{font-size:15px}
+}
