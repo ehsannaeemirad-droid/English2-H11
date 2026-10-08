@@ -1,6 +1,6 @@
 /* Bump this on every release: the shell is cache-first, so an unchanged
    version string would keep serving the previous styles.css / index.html. */
-const CACHE = "eng2-v10";
+const CACHE = "eng2-v13";
 const SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest",
   "./content/lesson1.js", "./content/glossary.js",
   "./fonts/vazirmatn-latin.woff2", "./fonts/vazirmatn-arabic.woff2", "./fonts/nunito-700-latin.woff2",

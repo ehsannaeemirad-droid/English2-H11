@@ -138,6 +138,19 @@ function speak(text, rate){
     speechSynthesis.speak(u);
   }catch(e){}
 }
+/* US pronunciation recording: sounds/pronunciation/[word]_us.mp3.
+   Falls back to browser TTS when no recording exists. */
+function playWordAudio(word){
+  if(!S.sound) return;
+  let fellBack = false;
+  const tts = ()=>{ if(!fellBack){ fellBack = true; speak(word); } };
+  try{
+    const a = new Audio("sounds/pronunciation/" + encodeURIComponent(String(word).replace(/'/g,"")) + "_us.mp3");
+    a.playbackRate = S.mode === "guided" ? 0.8 : 1;
+    a.onerror = tts;
+    a.play().catch(tts);
+  }catch(e){ tts(); }
+}
 function speakId(id, fallbackText){
   if(!S.sound) return;
   const file = AUDIO_MANIFEST[id];
@@ -163,8 +176,32 @@ function tone(freq, dur, gain){
     o.start(); o.stop(audioCtx.currentTime + dur);
   }catch(e){}
 }
-function sfxOk(){ tone(660,.1,.12); setTimeout(()=>tone(880,.16,.12),90); }
-function sfxNo(){ tone(220,.18,.1); }
+/* ---- recorded sound effects: sounds/fx/{correct|wrong|click|levelup}_N.mp3.
+   A random variant plays each time; falls back to the WebAudio tones above
+   if a file is missing. ---- */
+const FX_POOL = { correct:5, wrong:5, click:5, levelup:5 };
+function playFx(cat, fb){
+  if(!S.sound) return;
+  try{
+    const n = FX_POOL[cat] || 0;
+    if(!n){ if(fb) fb(); return; }
+    const idx = 1 + Math.floor(Math.random()*n);
+    const a = new Audio("sounds/fx/" + cat + "_" + idx + ".mp3");
+    a.volume = cat === "click" ? 0.45 : 0.9;
+    let fell = false;
+    const fall = ()=>{ if(!fell){ fell = true; if(fb) fb(); } };
+    a.onerror = fall;
+    a.play().catch(fall);
+  }catch(e){ if(fb) fb(); }
+}
+function sfxOk(){ playFx("correct", ()=>{ tone(660,.1,.12); setTimeout(()=>tone(880,.16,.12),90); }); }
+function sfxNo(){ playFx("wrong", ()=> tone(220,.18,.1)); }
+/* subtle tick on UI buttons (answer options and audio buttons have their own sounds) */
+document.addEventListener("click", e=>{
+  const b = e.target.closest("button");
+  if(!b || b.closest("#opts") || b.classList.contains("audiobtn")) return;
+  playFx("click");
+});
 
 /* ============ RECORD() — the ONLY writer of items (Step 2) ============ */
 function record(itemId, firstTryCorrect){
@@ -297,7 +334,8 @@ function wordPopup(w){
       '<button class="btn sec sm" style="flex:1" id="spkWord">تلفظ</button>' +
       '<button class="btn sm" style="flex:1" id="addCard" ' + (has?"disabled":"") + ">" +
         (has ? "\u2713 در کارت‌ها" : "افزودن به کارت‌ها") + "</button></div>");
-  document.getElementById("spkWord").onclick = ()=> speak(w);
+  document.getElementById("spkWord").onclick = ()=> playWordAudio(w);
+  playWordAudio(w); /* auto-play on tap */
   const b = document.getElementById("addCard");
   if(b && !has) b.onclick = ()=>{
     S.cards.push({w, fa:fa||"", pos:pos||"", box:0, due:Date.now(), lapses:0});
@@ -1252,7 +1290,7 @@ function rFlashcards(st, el){
     const fc = document.getElementById("fc");
     const back = fc.querySelector(".back");
     fc.onclick = ()=>{ back.style.display = back.style.display === "none" ? "flex" : "none"; };
-    document.getElementById("spk").onclick = e=>{ e.stopPropagation(); (appAudio || {speak:speak}).speak(w.w); };
+    document.getElementById("spk").onclick = e=>{ e.stopPropagation(); playWordAudio(w.w); };
     if(!S.cards.some(c=>c.w === w.w.toLowerCase())){
       S.cards.push({w:w.w.toLowerCase(), fa:w.fa||"", box:0, due:Date.now(), lapses:0});
       saveSoon();
@@ -1641,6 +1679,7 @@ function renderDone(sectionId){
   state.section = sec;
   const idx = state.lesson.sections.indexOf(sec);
   const next = state.lesson.sections[idx+1];
+  playFx("levelup"); /* achievement fanfare: chunk completed */
   const tested = S.sections[sec.id] && S.sections[sec.id].tested;
   $app.innerHTML = '<div class="complete"><div class="big">'+(tested?"✓":"★")+"</div>" +
     '<h1>'+(tested?"بخش با آزمون کامل شد!":"بخش کامل شد!")+"</h1>" +
@@ -1791,7 +1830,7 @@ function startTestOut(secId){
                 toast("آفرین! بخش با آزمون کامل شد");
                 go("home");
               } else {
-                toast("هنوز ۹۰٪ نشد — بخش را ادامه بده");
+                toast("به ۹۰٪ نرسیدی — بخش را ادامه بده");
                 go("home");
               }
             } };
@@ -1910,7 +1949,7 @@ function renderCards(){
       '<button class="btn sec sm" style="width:100%;margin-top:10px" id="spk">تلفظ</button></div>';
     const fc = document.getElementById("fc"), back = fc.querySelector(".back");
     fc.onclick = ()=> back.style.display = back.style.display === "none" ? "flex" : "none";
-    document.getElementById("spk").onclick = ()=> speak(c.w);
+    document.getElementById("spk").onclick = ()=> playWordAudio(c.w);
     document.getElementById("again").onclick = ()=>{
       c.box = Math.max(0, c.box-1); c.lapses++; c.due = Date.now() + 60*1000; saveSoon();
       next();
@@ -1960,7 +1999,7 @@ function renderReview(){
       '<button class="btn" id="prMist" style="margin-top:10px">تمرین اشتباه‌ها</button></div>'
     : '<div class="card"><p style="font-weight:800">چیزی برای مرور نیست. عالی!</p></div>';
   if(practiced.length){
-    html += '<div class="card"><h3>تمرین مهارتی</h3><p class="muted">از کم‌دقت‌ترین مهارت مرتب‌شده.</p>';
+    html += '<div class="card"><h3>تمرین مهارتی</h3><p class="muted">به ترتیب از کم‌دقت‌ترین مهارت.</p>';
     practiced.slice(0,6).forEach(s=>{
       html += '<div class="skillbar"><div class="srow"><span>'+esc(s.fa)+"</span><span>"+faNum(Math.round(s.acc*100))+"٪</span></div>" +
         '<div class="bar"><i style="width:'+Math.round(s.acc*100)+'%"></i></div>' +
@@ -1981,7 +2020,7 @@ function renderReview(){
   $app.querySelectorAll("[data-skill]").forEach(b=>{
     b.onclick = ()=>{
       const items = pickN(itemsBySkill(b.dataset.skill), 6);
-      if(!items.length){ toast("پرسشی از این مهارت نیست"); return; }
+      if(!items.length){ toast("از این مهارت پرسشی نیست"); return; }
       startPracticeRound(items, "practice");
     };
   });

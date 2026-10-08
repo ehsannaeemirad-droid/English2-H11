@@ -55,7 +55,7 @@ window.__GLOSSARY__ = {
   math:"ریاضی", newton:"نیوتون", sitting:"نشستن", under:"زیر", tree:"درخت",
   apple:"سیب", hit:"خورد", head:"سر", mahsa:"مهسا", homework:"تکالیف",
   called:"زنگ زد", teacher:"معلم", noise:"سر و صدا", workers:"کارگران",
-  jim:"جیم", car:"ماشین", white:"سفید", broke:"شکست", window:"پنجره",
+  jim:"جیم", car:"ماشین", white:"سفید", broke:"شکاند", window:"پنجره",
   why:"چرا", so:"اینقدر", much:"زیاد", yesterday:"دیروز", raining:"باریدن",
   living:"نشیمن", room:"اتاق", watched:"تماشا کرد", movie:"فیلم",
   // Self pronouns

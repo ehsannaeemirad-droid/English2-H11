@@ -2,3 +2,4 @@
 .tmpbuild/
 PUSH_HANDOFF.txt
 coverage.csv
+.mw-api-key
